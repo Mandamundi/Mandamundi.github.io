@@ -14,14 +14,36 @@ function showBunnySad() {
 
 function loadNPCSprite(characterType) {
   const npcSprite = document.getElementById('npc-sprite');
-  if (characterType === 'bear') {
-    npcSprite.src = 'assets/images/bear-idle.png';
-    npcSprite.style.opacity = '1';
-  } else if (characterType === 'bull') {
-    npcSprite.src = 'assets/images/bull-idle.png';
-    npcSprite.style.opacity = '1';
-  } else {
-    npcSprite.style.opacity = '0';
+  const npcContainer = document.getElementById('npc-container');
+  
+  npcContainer.style.display = 'block';
+  npcContainer.style.opacity = '0';
+  
+  setTimeout(() => {
+    if (characterType === 'bear') {
+      npcSprite.src = 'assets/images/bear-idle.png';
+    } else if (characterType === 'bull') {
+      npcSprite.src = 'assets/images/bull-idle.png';
+    } else {
+      npcContainer.style.opacity = '0';
+      return;
+    }
+    
+    npcContainer.style.opacity = '1';
+    
+    if (window.innerWidth <= 768) {
+      npcContainer.style.transform = 'translateZ(0)';
+    }
+  }, 300);
+}
+
+function initializeBunnyPosition() {
+  const bunnyContainer = document.getElementById('bunny-container');
+  bunnyContainer.style.display = 'block';
+  bunnyContainer.style.opacity = '1';
+  
+  if (window.innerWidth <= 768) {
+    bunnyContainer.style.transform = 'translateZ(0)';
   }
 }
 
@@ -42,12 +64,4 @@ function hideFeedback() {
   document.getElementById('wrong-icon').classList.remove('show');
 }
 
-function animateHeartLoss(heartElement) {
-  if (!heartElement) return;
-  heartElement.style.animation = 'shake 0.3s ease-in-out';
-  setTimeout(() => {
-    heartElement.style.opacity = '0';
-    heartElement.src = 'assets/images/heart-empty.png';
-  }, 300);
-}
 

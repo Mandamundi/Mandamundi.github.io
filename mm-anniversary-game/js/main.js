@@ -1,14 +1,28 @@
 const GameState = {
   currentScreen: 'start',
   currentQuestion: 0,
-  hearts: 3,
   score: 0,
-  totalQuestions: 12,
+  totalQuestions: TOTAL_QUESTIONS,
   answeredQuestions: [],
-  currentPath: null,
   isMuted: false,
   gameEnded: false
 };
+
+let activeTimeouts = [];
+
+function setGameTimeout(callback, delay) {
+  const timeoutId = setTimeout(() => {
+    callback();
+    activeTimeouts = activeTimeouts.filter(id => id !== timeoutId);
+  }, delay);
+  activeTimeouts.push(timeoutId);
+  return timeoutId;
+}
+
+function clearAllTimeouts() {
+  activeTimeouts.forEach(id => clearTimeout(id));
+  activeTimeouts = [];
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   initializeGame();
@@ -20,6 +34,7 @@ function initializeGame() {
   document.getElementById('restart-button').addEventListener('click', restartGame);
   document.getElementById('share-button').addEventListener('click', shareScore);
   document.getElementById('mute-button').addEventListener('click', toggleMute);
+  document.getElementById('copy-code-button').addEventListener('click', copyDiscountCode);
   initParallax();
   document.getElementById('total-questions').textContent = GameState.totalQuestions;
   showScreen('start');
@@ -27,11 +42,14 @@ function initializeGame() {
 
 function startGame() {
   playSound('start');
-  setTimeout(() => { playMusic('bgm'); }, 500);
+  setGameTimeout(() => { playMusic('bgm'); }, 500);
   showScreen('game');
-  setTimeout(() => {
+  
+  initializeBunnyPosition();
+  
+  setGameTimeout(() => {
     animateBunnyHop();
-    setTimeout(() => { loadQuestion(0); }, 600);
+    setGameTimeout(() => { loadQuestion(0); }, 600);
   }, 1000);
 }
 
@@ -48,12 +66,9 @@ function loadQuestion(questionIndex) {
   document.getElementById('current-question').textContent = questionIndex + 1;
   loadNPCSprite(question.character);
 
-  const wireContainer = document.getElementById('wire-game-container');
-  if (!wireContainer.classList.contains('hidden')) wireContainer.classList.add('hidden');
-
   if (question.storyText) {
     typewriterEffect('story-text', question.storyText, () => {
-      setTimeout(() => { displayQuestion(question); }, 500);
+      setGameTimeout(() => { displayQuestion(question); }, 500);
     });
   } else {
     document.getElementById('story-text').textContent = '';
@@ -66,20 +81,13 @@ function displayQuestion(question) {
   const answersContainer = document.getElementById('answers-container');
   answersContainer.innerHTML = '';
 
-  if (question.type === 'mini-game' && question.gameType === 'wire-loop') {
-    document.getElementById('question-text').textContent = question.questionText || '';
-    document.getElementById('wire-game-container').classList.remove('hidden');
-    initWireGame();
-    return;
-  }
-
   typewriterEffect('question-text', question.questionText, () => {
     renderAnswerOptions(question);
   });
 }
 
 function renderAnswerOptions(question) {
-  const { answers, correctAnswer, type } = question;
+  const { answers, correctAnswer } = question;
   const container = document.getElementById('answers-container');
   if (!answers) return;
   answers.forEach((answer, index) => {
@@ -87,7 +95,7 @@ function renderAnswerOptions(question) {
     button.className = 'answer-option';
     button.textContent = answer;
     button.dataset.index = index.toString();
-    button.dataset.correct = (type === 'path-choice' ? 'false' : (index === correctAnswer).toString());
+    button.dataset.correct = (index === correctAnswer).toString();
     button.addEventListener('mouseenter', () => playSound('hover'));
     button.addEventListener('click', () => handleAnswerClick(button, question));
     container.appendChild(button);
@@ -97,79 +105,164 @@ function renderAnswerOptions(question) {
 function handleAnswerClick(button, question) {
   document.querySelectorAll('.answer-option').forEach(btn => { btn.style.pointerEvents = 'none'; });
   playSound('select');
-  if (question.type === 'path-choice') {
-    const choiceIndex = parseInt(button.dataset.index, 10);
-    handlePathChoice(choiceIndex);
-    setTimeout(() => { advanceToNextQuestion(); }, 500);
-    return;
-  }
 
   const isCorrect = button.dataset.correct === 'true';
   if (isCorrect) {
     showFeedback('correct');
     playSound('correct');
-    GameState.score++;
-    setTimeout(() => { advanceToNextQuestion(); }, 1500);
+    incrementScore();
+    setGameTimeout(() => { advanceToNextQuestion(); }, 1500);
   } else {
     showFeedback('wrong');
     playSound('wrong');
-    loseHeart();
-    if (GameState.hearts <= 0) {
-      setTimeout(() => { endGame(); }, 2000);
-    } else {
-      setTimeout(() => { advanceToNextQuestion(); }, 2000);
-    }
+    setGameTimeout(() => { advanceToNextQuestion(); }, 2000);
   }
   GameState.answeredQuestions.push({ question: GameState.currentQuestion, correct: isCorrect });
+}
+
+function incrementScore() {
+  GameState.score++;
+  const scoreElement = document.getElementById('score-display');
+  scoreElement.textContent = GameState.score;
+  
+  scoreElement.style.transform = 'scale(1.2)';
+  scoreElement.style.color = '#FFD700';
+  playSound('score-increase');
+  
+  setGameTimeout(() => {
+    scoreElement.style.transform = 'scale(1)';
+    scoreElement.style.color = '#FFFFFF';
+  }, 300);
 }
 
 function advanceToNextQuestion() {
   hideFeedback();
   animateBunnyHop();
-  setTimeout(() => { loadQuestion(GameState.currentQuestion + 1); }, 600);
-}
-
-function loseHeart() {
-  GameState.hearts--;
-  const heart = document.querySelector(`.heart[data-heart="${GameState.hearts + 1}"]`);
-  animateHeartLoss(heart);
-  showBunnySad();
+  setGameTimeout(() => { loadQuestion(GameState.currentQuestion + 1); }, 600);
 }
 
 function endGame() {
   GameState.gameEnded = true;
-  let endingTier;
-  if (GameState.hearts === 3) endingTier = 'gold';
-  else if (GameState.hearts === 2) endingTier = 'silver';
-  else if (GameState.hearts === 1) endingTier = 'bronze';
-  else endingTier = 'gameover';
+  const endingTier = determineEnding(GameState.score);
   displayEnding(endingTier);
 }
 
+function determineEnding(score) {
+  const maxScore = TOTAL_QUESTIONS;
+  const percentage = (score / maxScore) * 100;
+  
+  if (percentage === 100) {
+    return 'perfect';
+  } else if (percentage >= 80) {
+    return 'excellent';
+  } else if (percentage >= 60) {
+    return 'good';
+  } else if (percentage >= 40) {
+    return 'okay';
+  } else {
+    return 'tryagain';
+  }
+}
+
 function displayEnding(tier) {
+  const score = GameState.score;
   const endings = {
-    gold: { title: '黃金夥伴', description: '完美！MM 邀請您參加週年慶典。您不僅是客戶，更是我們的家人！', sound: 'victory-gold' },
-    silver: { title: '信賴客戶', description: '做得好！您訂閱了 MM，業務蒸蒸日上。知識就是力量！', sound: 'victory-silver' },
-    bronze: { title: '堅定學習者', description: '您犯了錯但從未放棄。MM 為您提供試用期。我們相信您！', sound: 'victory-bronze' },
-    gameover: { title: '東山再起', description: '錯誤太多了，但這段旅程教會了您一些東西。今天您了解了 MM！這是值得的。準備好後再試一次！', sound: 'gameover' }
+    perfect: {
+      title: '完美無瑕！',
+      message: '恭喜！你答對了所有 11 題！你已經是 MM 專家了！',
+      encouragement: '你對 MM 的了解令人印象深刻。作為獎勵，這是專屬於你的訂閱折扣！',
+      icon: '🏆',
+      sound: 'victory-gold'
+    },
+    excellent: {
+      title: '表現優異！',
+      message: `太棒了！你答對了 ${score} 題！你對 MM 非常了解！`,
+      encouragement: '你的知識令人欽佩！享受這個特別的訂閱折扣吧！',
+      icon: '⭐',
+      sound: 'victory-silver'
+    },
+    good: {
+      title: '做得不錯！',
+      message: `很好！你答對了 ${score} 題！你已經掌握了 MM 的基礎！`,
+      encouragement: '繼續學習，你會越來越厲害！這是給你的訂閱折扣！',
+      icon: '👍',
+      sound: 'victory-bronze'
+    },
+    okay: {
+      title: '還不錯！',
+      message: `你答對了 ${score} 題！還有進步空間！`,
+      encouragement: '別擔心，每個人都是從學習開始的！這是給你的訂閱折扣，繼續探索 MM 吧！',
+      icon: '💪',
+      sound: 'victory-bronze'
+    },
+    tryagain: {
+      title: '繼續加油！',
+      message: `你答對了 ${score} 題。別灰心！`,
+      encouragement: '沒關係！這是學習的過程。這是給你的訂閱折扣，希望能幫助你更了解 MM！',
+      icon: '🌱',
+      sound: 'gameover'
+    }
   };
+  
   const ending = endings[tier];
   document.getElementById('ending-title').textContent = ending.title;
-  document.getElementById('ending-description').textContent = ending.description;
-  document.getElementById('score-summary').textContent = `你答對了 ${GameState.score}/${GameState.totalQuestions} 題`;
+  document.getElementById('ending-description').textContent = ending.message + ' ' + ending.encouragement;
+  document.getElementById('score-summary').textContent = `你答對了 ${score}/${GameState.totalQuestions} 題`;
   stopMusic('bgm');
   playSound(ending.sound);
   showScreen('ending');
 }
 
+function copyDiscountCode() {
+  const code = document.getElementById('discount-code-text').textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    const button = document.getElementById('copy-code-button');
+    button.textContent = '已複製！';
+    playSound('correct');
+    
+    setGameTimeout(() => {
+      button.textContent = '複製';
+    }, 2000);
+  }).catch(() => {
+    alert('無法複製，請手動複製：' + code);
+  });
+}
+
 function restartGame() {
+  clearAllTimeouts();
+  
   GameState.currentQuestion = 0;
-  GameState.hearts = 3;
   GameState.score = 0;
   GameState.answeredQuestions = [];
-  GameState.currentPath = null;
   GameState.gameEnded = false;
-  document.querySelectorAll('.heart').forEach(h => { h.src = 'assets/images/heart-full.png'; h.style.opacity = '1'; });
+  
+  document.getElementById('story-text').textContent = '';
+  document.getElementById('question-text').textContent = '';
+  document.getElementById('answers-container').innerHTML = '';
+  
+  const scoreElement = document.getElementById('score-display');
+  scoreElement.textContent = '0';
+  scoreElement.style.transform = 'scale(1)';
+  scoreElement.style.color = '#FFFFFF';
+  
+  hideFeedback();
+  
+  const bunnySprite = document.getElementById('bunny-sprite');
+  bunnySprite.src = 'assets/images/bunny-idle.png';
+  bunnySprite.className = 'character-sprite';
+  
+  const npcSprite = document.getElementById('npc-sprite');
+  npcSprite.src = '';
+  npcSprite.style.opacity = '0';
+  
+  document.getElementById('npc-container').style.opacity = '0';
+  
+  if (window.typewriterTimeout) {
+    clearTimeout(window.typewriterTimeout);
+  }
+  
+  document.getElementById('current-question').textContent = '1';
+  
   startGame();
 }
 
