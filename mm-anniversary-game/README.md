@@ -27,5 +27,5 @@ Notes
 
 - Music starts after pressing Start.
 - Mute with the speaker button (🔊/🔇).
-- Wire loop mini-game path is a placeholder; adjust `generateLogoPath()` in `js/wiregame.js` for the real logo.
+- Game features 11 linear questions with score-based endings.
 
