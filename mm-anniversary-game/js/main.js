@@ -62,19 +62,34 @@ function showScreen(screenName) {
 function loadQuestion(questionIndex) {
   const question = getQuestion(questionIndex);
   if (!question) { endGame(); return; }
+  
+  // Clear previous question content IMMEDIATELY
+  document.getElementById('question-text').textContent = '';
+  document.getElementById('answers-container').innerHTML = '';
+  
+  // Optional: fade out NPC during transition
+  const npcContainer = document.getElementById('npc-container');
+  npcContainer.style.opacity = '0';
+  
   GameState.currentQuestion = questionIndex;
   document.getElementById('current-question').textContent = questionIndex + 1;
-  loadNPCSprite(question.character);
-
-  if (question.storyText) {
-    typewriterEffect('story-text', question.storyText, () => {
-      setGameTimeout(() => { displayQuestion(question); }, 500);
-    });
-  } else {
-    document.getElementById('story-text').textContent = '';
-    displayQuestion(question);
-  }
+  
+  // Small delay before loading new NPC to prevent flash
+  setGameTimeout(() => {
+    loadNPCSprite(question.character);
+    npcContainer.style.opacity = '1';
+    
+    if (question.storyText) {
+      typewriterEffect('story-text', question.storyText, () => {
+        setGameTimeout(() => { displayQuestion(question); }, 500);
+      });
+    } else {
+      document.getElementById('story-text').textContent = '';
+      displayQuestion(question);
+    }
+  }, 100);
 }
+
 
 function displayQuestion(question) {
   document.getElementById('question-text').textContent = '';
