@@ -16,12 +16,6 @@ python3 -m http.server 8080
 
 Open `http://localhost:8080`.
 
-Assets
-------
-
-- Add images under `assets/images/` and audio under `assets/audio/`.
-- Add font file at `assets/fonts/VCR_OSD_MONO.ttf`.
-
 Notes
 -----
 

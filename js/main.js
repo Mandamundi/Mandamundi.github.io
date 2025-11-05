@@ -184,36 +184,36 @@ function displayEnding(tier) {
   const endings = {
     perfect: {
       title: '完美無瑕！',
-      message: '恭喜！你答對了所有 11 題！你已經是 MM 專家了！',
-      encouragement: '你對 MM 的了解令人印象深刻。作為獎勵，這是專屬於你的訂閱折扣！',
+      message: '恭喜！你答對了所有 11 題！',
+      encouragement: '你對 MM 的了解令人印象深刻。作為獎勵，和 MM 一起持續成長吧！',
       icon: '🏆',
       sound: 'victory-gold'
     },
     excellent: {
       title: '表現優異！',
       message: `太棒了！你答對了 ${score} 題！你對 MM 非常了解！`,
-      encouragement: '你的知識令人欽佩！享受這個特別的訂閱折扣吧！',
+      encouragement: '你的知識令人欽佩！和 MM 一起持續成長吧！',
       icon: '⭐',
       sound: 'victory-silver'
     },
     good: {
       title: '做得不錯！',
       message: `很好！你答對了 ${score} 題！你已經掌握了 MM 的基礎！`,
-      encouragement: '繼續學習，你會越來越厲害！這是給你的訂閱折扣！',
+      encouragement: '繼續學習，你會越來越厲害！和 MM 一起持續成長吧！',
       icon: '👍',
       sound: 'victory-bronze'
     },
     okay: {
       title: '還不錯！',
       message: `你答對了 ${score} 題！還有進步空間！`,
-      encouragement: '別擔心，每個人都是從學習開始的！這是給你的訂閱折扣，繼續探索 MM 吧！',
+      encouragement: '別擔心，每個人都是從學習開始的！和 MM 一起持續成長吧！',
       icon: '💪',
       sound: 'victory-bronze'
     },
     tryagain: {
       title: '繼續加油！',
       message: `你答對了 ${score} 題。別灰心！`,
-      encouragement: '沒關係！這是學習的過程。這是給你的訂閱折扣，希望能幫助你更了解 MM！',
+      encouragement: '沒關係！這是學習的過程。和 MM 一起持續成長吧！',
       icon: '🌱',
       sound: 'gameover'
     }
