@@ -268,7 +268,6 @@ function restartGame() {
   
   const npcSprite = document.getElementById('npc-sprite');
   npcSprite.src = '';
-  npcSprite.style.opacity = '0';
   
   document.getElementById('npc-container').style.opacity = '0';
   
