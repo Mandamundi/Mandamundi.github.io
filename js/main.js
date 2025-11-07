@@ -62,42 +62,45 @@ function loadQuestion(questionIndex) {
   const question = getQuestion(questionIndex);
   if (!question) { endGame(); return; }
   
-  // Clear previous question content IMMEDIATELY
+  document.getElementById('story-text').textContent = '';
   document.getElementById('question-text').textContent = '';
   document.getElementById('answers-container').innerHTML = '';
   
-  // Optional: fade out NPC during transition
   const npcContainer = document.getElementById('npc-container');
   npcContainer.style.opacity = '0';
   
   GameState.currentQuestion = questionIndex;
   document.getElementById('current-question').textContent = questionIndex + 1;
   
-  // Small delay before loading new NPC to prevent flash
   setGameTimeout(() => {
     loadNPCSprite(question.character);
     npcContainer.style.opacity = '1';
-    
-    if (question.storyText) {
-      typewriterEffect('story-text', question.storyText, () => {
-        setGameTimeout(() => { displayQuestion(question); }, 500);
-      });
-    } else {
-      document.getElementById('story-text').textContent = '';
-      displayQuestion(question);
-    }
+    displayQuestion(question);
   }, 100);
 }
 
 
 function displayQuestion(question) {
-  document.getElementById('question-text').textContent = '';
+  const storyElement = document.getElementById('story-text');
+  const questionElement = document.getElementById('question-text');
   const answersContainer = document.getElementById('answers-container');
+  
   answersContainer.innerHTML = '';
 
-  typewriterEffect('question-text', question.questionText, () => {
-    renderAnswerOptions(question);
-  });
+  if (question.storyText) {
+    typewriterEffect('story-text', question.storyText, () => {
+      setGameTimeout(() => {
+        typewriterEffect('question-text', question.questionText, () => {
+          renderAnswerOptions(question);
+        });
+      }, 300);
+    });
+  } else {
+    storyElement.textContent = '';
+    typewriterEffect('question-text', question.questionText, () => {
+      renderAnswerOptions(question);
+    });
+  }
 }
 
 function renderAnswerOptions(question) {

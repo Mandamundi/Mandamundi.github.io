@@ -5,7 +5,7 @@ const QUESTIONS = [
     storyText: '你的小生意遇到困難，需要專業見解。熊出現了...',
     questionText: '「你需要 財經 M 平方！但你知道 MM 的五大核心價值觀是什麼嗎？」',
     answers: [
-      '讓數據說話、教育行銷、人人研究員、專業社群、邁向世界',
+      '正向影響、創新思維、用戶需求、團隊合作、當責熱情',
       '誠實、透明、創新、團隊、品質',
       '正直、創新、協作、追求卓越、客戶至上',
       '價值投資、長期思維、研究驅動、透明、創新'
@@ -31,10 +31,10 @@ const QUESTIONS = [
     storyText: null,
     questionText: '「研究是他們的主力，猜猜研究部門有多少人？」',
     answers: [
-      '5-8 人',
-      '8-12 人',
-      '12-15 人',
-      '15-20 人'
+      '5-10 人',
+      '11-15 人',
+      '15-18 人',
+      '18+ 人'
     ],
     correctAnswer: 0
   },
@@ -96,12 +96,12 @@ const QUESTIONS = [
     storyText: '你快要成為 MM 專家了！',
     questionText: '快！「MM」實際上代表什麼意思？',
     answers: [
-      'MacroMicro',
       'MicroMacro',
+      'MacroMicro',
       'ModernMacro',
       'MarketMacro'
     ],
-    correctAnswer: 0
+    correctAnswer: 1
   },
   {
     id: 8,
