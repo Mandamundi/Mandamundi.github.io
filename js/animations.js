@@ -50,20 +50,9 @@ function initializeBunnyPosition() {
 }
 
 function showFeedback(type) {
-  const correctIcon = document.getElementById('correct-icon');
-  const wrongIcon = document.getElementById('wrong-icon');
-  if (type === 'correct') {
-    correctIcon.classList.add('show');
-    setTimeout(() => { correctIcon.classList.remove('show'); }, 1500);
-  } else if (type === 'wrong') {
-    wrongIcon.classList.add('show');
-    setTimeout(() => { wrongIcon.classList.remove('show'); }, 2000);
-  }
+  // Popup check/X removed – feedback now only via answer highlight + sounds.
 }
 
 function hideFeedback() {
-  document.getElementById('correct-icon').classList.remove('show');
-  document.getElementById('wrong-icon').classList.remove('show');
+  // No-op – kept to avoid errors from existing calls.
 }
-
-
