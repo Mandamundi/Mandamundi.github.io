@@ -228,31 +228,42 @@
     z-index: 2;
   }
   
-  /* Position characters side by side */
+/* Position characters side by side */
+#bunny-container {
+  position: relative;
+  order: 2;
+  margin-right: auto;
+  padding-left: 100px;
+}
+
+#npc-container {
+  position: relative;
+  order: 3;
+  margin-left: auto;
+  padding-right: 100px;
+}
+
+/* Keep them on same horizontal line */
+#bunny-container,
+#npc-container {
+  align-self: flex-start;
+  margin-top: -120px; /* Pull them up to same line */
+}
+
+#npc-container {
+  margin-top: -120px; /* Same offset to align horizontally */
+}
+
+/* Mobile: Increase spacing between characters */
+@media (max-width: 768px) {
   #bunny-container {
-    position: relative;
-    order: 2;
-    margin-right: auto;
-    padding-left: 100px;
+    padding-left: 20px;
   }
   
   #npc-container {
-    position: relative;
-    order: 3;
-    margin-left: auto;
-    padding-right: 100px;
+    padding-right: 20px;
   }
-  
-  /* Keep them on same horizontal line */
-  #bunny-container,
-  #npc-container {
-    align-self: flex-start;
-    margin-top: -120px; /* Pull them up to same line */
-  }
-  
-  #npc-container {
-    margin-top: -120px; /* Same offset to align horizontally */
-  }
+}
   
   .character-sprite {
     width: 100px;
