@@ -40,6 +40,9 @@ function initializeGame() {
 }
 
 function startGame() {
+  // Show score container when game starts
+  document.getElementById('score-container').style.display = 'flex';
+  
   playSound('start');
   setGameTimeout(() => { playMusic('bgm'); }, 500);
   showScreen('game');
@@ -232,6 +235,10 @@ function determineEnding(score) {
 
 function displayEnding(tier) {
   const score = GameState.score;
+  
+  // Hide score container on ending screen
+  document.getElementById('score-container').style.display = 'none';
+  
   const endings = {
     perfect: {
       title: '完美無瑕！',
