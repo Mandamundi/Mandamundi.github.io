@@ -260,35 +260,35 @@ function displayEnding(tier) {
   const endings = {
     perfect: {
       title: '完美無瑕！',
-      message: '恭喜！你也擁有 MM 魂！',
+      message: '恭喜，你也擁有 MM 魂！',
       encouragement: '送你個小禮物，和 MM 一起持續成長吧！',
       icon: '🏆',
       sound: 'victory-gold'
     },
     excellent: {
       title: '表現優異！',
-      message: `太棒了，你答對了 ${score} 題！你有 MM 精神！`,
+      message: `太棒了，答對 ${score} 題～ 你很有 MM 精神！`,
       encouragement: '送你個小禮物，和 MM 一起持續成長吧！',
       icon: '⭐',
       sound: 'victory-silver'
     },
     good: {
       title: '做得不錯！',
-      message: `好棒，你答對了 ${score} 題！你很懂 MM :D`,
+      message: `好棒，你答對了 ${score} 題，你很懂 MM :D`,
       encouragement: '送你個小禮物，和 MM 一起持續成長吧！',
       icon: '👍',
       sound: 'victory-bronze'
     },
     okay: {
       title: '你是潛力股！',
-      message: `你答對了 ${score} 題，可以再次挑戰`,
+      message: `你答對了 ${score} 題，可以再次挑戰～`,
       encouragement: '送你個小禮物，和 MM 一起持續成長吧！',
       icon: '💪',
       sound: 'victory-bronze'
     },
     tryagain: {
       title: '繼續加油！',
-      message: `你答對了 ${score} 題，繼續加油～`,
+      message: `你答對了 ${score} 題，可以再次挑戰～`,
       encouragement: '送你個小禮物，和 MM 一起持續成長吧！',
       icon: '🌱',
       sound: 'gameover'
@@ -297,7 +297,7 @@ function displayEnding(tier) {
   
   const ending = endings[tier];
   document.getElementById('ending-title').textContent = ending.title;
-  document.getElementById('ending-description').textContent = ending.message + ' ' + ending.encouragement;
+  document.getElementById('ending-description').innerHTML = ending.message + '<br>' + ending.encouragement;
   stopMusic('bgm');
   playSound(ending.sound);
   showScreen('ending');

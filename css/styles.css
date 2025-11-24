@@ -596,6 +596,14 @@
     flex: 1 1 0;            /* each takes half the available width */
     text-align: center;
   }
+
+  @media (max-width: 480px) {
+    .ending-buttons .pixel-button {
+      padding: 8px 12px;    /* less horizontal padding */
+      font-size: 18px;      /* slightly smaller to avoid wrap */
+      white-space: nowrap;  /* force single-line text */
+    }
+  }
   
   
   /* ============================================
@@ -605,7 +613,7 @@
 .discount-container {
   width: 100%;
   max-width: 480px;
-  margin: 0 auto;
+  margin: 24px auto 0;
 }
 
 .discount-box {
