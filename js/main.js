@@ -37,7 +37,25 @@ function initializeGame() {
   initParallax();
   document.getElementById('total-questions').textContent = GameState.totalQuestions;
   showScreen('start');
+
+  // NEW: decide mobile/desktop layout based on actual game container size
+  updateLayoutMode();
+  window.addEventListener('resize', updateLayoutMode);
 }
+
+
+function updateLayoutMode() {
+  const game = document.getElementById('game-container');
+  if (!game) return;
+
+  const rect = game.getBoundingClientRect();
+  // Adjust this threshold to match when you want 2x2 to kick in
+  const isMobileLayout = rect.width < 620;
+
+  game.classList.toggle('mobile-layout', isMobileLayout);
+  game.classList.toggle('desktop-layout', !isMobileLayout);
+}
+
 
 function startGame() {
   // Show score container when game starts
