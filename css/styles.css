@@ -370,7 +370,30 @@
     z-index: 5;
     margin: 1rem auto 0;
     order: 5;
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
+  
+  /* Custom scrollbar for answers-container */
+  .answers-container::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .answers-container::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+  }
+  
+  .answers-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 4px;
+  }
+  
+  .answers-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.7);
+  }
+  
   .game-container.desktop-layout .answers-container {
     grid-template-columns: 1fr 1fr;
     max-width: 700px;
@@ -531,6 +554,9 @@
     padding: 6px 4px 10px;
     margin: 0 auto 0;         /* REMOVE extra top margin on mobile */
     background: transparent;
+    max-height: 40vh;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 }
 
